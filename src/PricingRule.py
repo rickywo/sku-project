@@ -56,4 +56,15 @@ class PricingRule:
     # Somehow I need the number of item of another bundle product from the order
     # items: the order structure from Checkout class
     def bundle_buy_handler(self, item, num_of_item, items):
-        return 0
+        sku = item.get_sku()
+        price = item.get_price()
+        bundle_product = self.__bundle_buy_products[sku]
+
+        if bundle_product in items:
+            num_of_bundle_product = items[bundle_product]
+            # deduct the amount of money based on the number of bundle product from the order
+            # Example: 2 vga, 1 mbp. This function reduces charge to 2 vga to 1 because there is 1 mbp in the same order
+            excessive_num_of_item = num_of_item - num_of_bundle_product['quantity']
+            return (0, excessive_num_of_item * price)[excessive_num_of_item > 0]
+        else:
+            return num_of_item * price
