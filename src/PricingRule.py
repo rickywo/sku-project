@@ -14,7 +14,6 @@ class PricingRule:
     __bundle_buy_products = {Sku.VGA_ADAPTER: Sku.MACBOOK_PRO}
 
     def __init__(self, pm: ProductManager):
-        """ Virtually private constructor. """
         self.productManager = pm
 
     # The discount rule should be applied when scanning an item
@@ -39,7 +38,20 @@ class PricingRule:
             return num_of_item * item.get_price()
 
     def get_one_free_handler(self, item, num_of_item):
-        return 0
+        sku = item.get_sku()
+        price = item.get_price()
+        # a complete set contains a free item
+        set_price = price * (self.__get_one_free_products[sku][self.QUANTITY] - 1)
+        num_of_set = math.floor(num_of_item / (self.__get_one_free_products[sku][self.QUANTITY]))
+
+        if num_of_set < 1:
+            return num_of_item * price
+        else:
+            sp = num_of_set * set_price  # multiply set_price to the number of set purchased
+            # calculate the rest of item cannot form a set
+            rs = num_of_item % self.__get_one_free_products[sku][self.QUANTITY]
+
+            return sp + rs * price
 
     # Somehow I need the number of item of another bundle product from the order
     # items: the order structure from Checkout class
