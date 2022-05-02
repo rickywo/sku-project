@@ -10,14 +10,23 @@ class ProductManager:
         # mbp	MacBook Pro	$1399.99
         # atv	Apple TV	$109.50
         # vga	VGA adapter	$30.00
-        return
+        self.add_product('ipd', 'Super iPad', 549.99)
+        self.add_product('mbp', 'MacBook Pro', 1399.99)
+        self.add_product('atv', 'Apple TV', 109.50)
+        self.add_product('vga', 'VGA adapter', 30.00)
 
     def __init__(self):
-        """ Virtually private constructor. """
         self.__seed_products()
 
     def add_product(self, sku, name, price):
-        return False
+        if sku in self.__products:
+            return False
+        else:
+            self.__products[sku] = Product(sku, name, price)
+            return True
 
     def get_product(self, sku):
-        return None
+        if sku in self.__products:
+            return self.__products[sku]
+        else:
+            return None
